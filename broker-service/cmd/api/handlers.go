@@ -31,7 +31,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 
 	err := app.readJSON(w, r, &data)
 	if err != nil {
-		app.errorJSON(w, err, http.StatusBadRequest)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -39,7 +39,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.Authenticate(w, data.Auth)
 	default:
-		app.errorJSON(w, errors.New("invalid action"), http.StatusBadRequest)
+		app.errorJSON(w, errors.New("invalid action"))
 	}
 }
 
@@ -48,25 +48,25 @@ func (app *Config) Authenticate(w http.ResponseWriter, a AuthPayload) {
 	jsonData, _ := json.MarshalIndent(a, "", "\t")
 
 	//call service
-	request, err := http.NewRequest("POST", "http://localhost:8081/authenticate", bytes.NewBuffer(jsonData))
+	request, err := http.NewRequest("POST", "http://authentication-service/authenticate", bytes.NewBuffer(jsonData))
 	if err != nil {
-		app.errorJSON(w, err, http.StatusInternalServerError)
+		app.errorJSON(w, err)
 		return
 	}
 
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		app.errorJSON(w, err, http.StatusInternalServerError)
+		app.errorJSON(w, err)
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusUnauthorized {
-		app.errorJSON(w, errors.New("invalid credentials"), http.StatusUnauthorized)
+		app.errorJSON(w, errors.New("invalid credentials"))
 		return
 	} else if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, errors.New("error calling authentication service"), http.StatusInternalServerError)
+		app.errorJSON(w, errors.New("error calling authentication service"))
 		return
 	}
 
@@ -74,12 +74,12 @@ func (app *Config) Authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
-		app.errorJSON(w, err, http.StatusInternalServerError)
+		app.errorJSON(w, err)
 		return
 	}
 
 	if jsonFromService.Error {
-		app.errorJSON(w, errors.New(jsonFromService.Msg), http.StatusUnauthorized)
+		app.errorJSON(w, err, http.StatusUnauthorized)
 		return
 	}
 
@@ -88,10 +88,5 @@ func (app *Config) Authenticate(w http.ResponseWriter, a AuthPayload) {
 	payload.Msg = "Auth successful"
 	payload.Data = jsonFromService.Data
 
-	err = app.writeJSON(w, http.StatusAccepted, payload)
-	if err != nil {
-		app.errorJSON(w, err, http.StatusInternalServerError)
-		return
-	}
-
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
