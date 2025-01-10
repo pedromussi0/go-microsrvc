@@ -124,10 +124,10 @@ func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
 
 	collection := client.Database("logger").Collection("log_entries")
 
-	docID, err := primitive.ObjectIDFromHex(l.id)
+	docID, err := primitive.ObjectIDFromHex(l.ID)
 	if err != nil {
 		log.Println("Error converting id to object id: ", err)
-		return err
+		return nil, err
 	}
 
 	result, err := collection.UpdateOne(
