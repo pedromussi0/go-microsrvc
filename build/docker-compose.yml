@@ -43,8 +43,8 @@ services:
       replicas: 1
     environment:
       MAIL_DOMAIN: localhost
-      MAILHOG_HOST: mailhog
-      MAILHOG_PORT: 1025
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
       MAIL_ENCRYPTION: none
       MAIL_USERNAME: ""
       MAIL_PASSWORD: ""

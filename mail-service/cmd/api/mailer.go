@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"html/template"
+	"log"
 	"time"
 
 	"github.com/vanng822/go-premailer/premailer"
@@ -10,24 +11,24 @@ import (
 )
 
 type Mail struct {
-	Domain     string `json:"domain"`
-	Host       string `json:"host"`
-	Port       int    `json:"port"`
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Encryption string `json:"encryption"`
-	FromAdress string `json:"from_adress"`
-	FromName   string `json:"from_name"`
+	Domain     string
+	Host       string
+	Port       int
+	Username   string
+	Password   string
+	Encryption string
+	FromAdress string
+	FromName   string
 }
 
 type Message struct {
-	From        string         `json:"from"`
-	FromName    string         `json:"from_name"`
-	To          string         `json:"to"`
-	Subject     string         `json:"subject"`
-	Attachments []string       `json:"attachments"`
-	Data        any            `json:"data"`
-	DataMap     map[string]any `json:"data_map"`
+	From        string
+	FromName    string
+	To          string
+	Subject     string
+	Attachments []string
+	Data        any
+	DataMap     map[string]any
 }
 
 func (m *Mail) sendSMTPMessage(msg Message) error {
@@ -67,6 +68,7 @@ func (m *Mail) sendSMTPMessage(msg Message) error {
 
 	client, err := server.Connect()
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -86,6 +88,7 @@ func (m *Mail) sendSMTPMessage(msg Message) error {
 
 	err = email.Send(client)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
