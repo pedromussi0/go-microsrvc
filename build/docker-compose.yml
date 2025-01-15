@@ -66,6 +66,14 @@ services:
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
 
+  listener-service:
+    build:
+      context: ./../listener-service
+      dockerfile: ./../listener-service/listener-service.dockerfile
+    deploy:
+      mode: replicated
+      replicas: 1
+
   mongo:
     image: 'mongo:5.0'
     ports:
@@ -90,3 +98,14 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+
+  rabbitmq:
+    image: 'rabbitmq:3.9-management-alpine'
+    ports:
+      - "5672:5672"
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - ./db-data/rabbitmq/:/var/lib/rabbitmq/
