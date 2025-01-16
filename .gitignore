@@ -2,3 +2,7 @@
 authApp
 brokerApp
 db-data
+listener-service/listenerApp
+broker-service/brokerApp
+logger-service/loggerServiceApp
+mail-service\mailApp
