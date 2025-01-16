@@ -1,5 +1,5 @@
 SHELL=cmd.exe
-FRONT_END_BINARY=frontApp.exe
+FRONT_END_BINARY=frontApp
 BROKER_BINARY=brokerApp
 LOGGER_BINARY=loggerServiceApp
 AUTH_BINARY=authApp
@@ -30,6 +30,11 @@ down:
 build_broker:
 	@echo Building broker binary...
 	chdir ..\broker-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${BROKER_BINARY} ./cmd/api
+	@echo Done!
+
+build_front:
+	@echo Building frontend binary...
+	cd ..\front-end && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${FRONT_END_BINARY} ./cmd/web
 	@echo Done!
 
 build_mailer:

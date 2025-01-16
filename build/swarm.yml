@@ -1,0 +1,96 @@
+
+
+services:
+
+  front-end:
+    image: "pedromussi/front-end:1.0.0"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  broker-service:
+    image: "pedromussi/broker-service:1.0.1"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  listener-service:
+    image: "pedromussi/listener-service:1.0.0"
+    deploy:
+      mode: replicated
+      replicas: 1
+  
+  authentication-service:
+    image: "pedromussi/authentication-service:1.0.0"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
+    
+  logger-service:
+    image: "pedromussi/logger-service:1.0.0"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  mail-service:
+    image: "pedromussi/mail-service:1.0.0"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MAIL_DOMAIN: localhost
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_ENCRYPTION: none
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_FROM_ADDRESS: "no-reply@localhost"
+      MAIL_FROM_NAME: "No Reply"
+
+  rabbitmq:
+    image: 'rabbitmq:3.9-management-alpine'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    deploy:
+      mode: global
+
+  mailhog:
+    image: 'mailhog/mailhog:latest'
+    ports:
+      - "8025:8025"
+    restart: always
+    deploy:
+      mode: global
+
+  mongo:
+    image: 'mongo:5.0'
+    ports:
+      - "27017:27017"
+    restart: always
+    deploy:
+      mode: global
+    environment:
+      MONGO_INITDB_DATABASE: logs
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./db-data/mongo/:/data/db/
+
+  postgres:
+    image: 'postgres:14.0'
+    ports:
+      - "5432:5432"
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
