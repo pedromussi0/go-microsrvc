@@ -2,11 +2,26 @@
 
 services:
 
-  front-end:
-    image: "pedromussi/front-end:1.0.0"
+  caddy:
+    image: "pedromussi/micro-caddy:1.0.0"
     deploy:
       mode: replicated
       replicas: 1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+  front-end:
+    image: "pedromussi/front-end:1.0.6"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      BROKER_URL: "http://backend:80"
+    
 
   broker-service:
     image: "pedromussi/broker-service:1.0.1"
@@ -94,3 +109,8 @@ services:
       POSTGRES_DB: users
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:

@@ -13,7 +13,7 @@ up:
 	@echo Docker images started!
 
 ## up_build: stops docker-compose (if running), builds all projects and starts docker compose
-up_build: build_broker build_auth build_logger build_mailer build_listener
+up_build: build_broker build_auth build_logger build_mailer build_listener build_front
 	@echo Stopping docker images (if running...)
 	docker-compose down
 	@echo Building (when required) and starting docker images...
@@ -50,12 +50,6 @@ build_logger:
 build_listener:
 	@echo Building listener binary...
 	chdir ..\listener-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${LISTENER_BINARY} .
-	@echo Done!
-
-## build_front: builds the frone end binary
-build_front:
-	@echo Building front end binary...
-	chdir ..\front-end && set CGO_ENABLED=0&& set GOOS=windows&& go build -o ${FRONT_END_BINARY} ./cmd/web
 	@echo Done!
 
 ## start: starts the front end
